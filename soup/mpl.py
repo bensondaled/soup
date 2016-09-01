@@ -4,7 +4,7 @@ import numpy as np
 mpl_plot = pl.plot
 mpl_scatter = pl.scatter
 
-pl.style.use('benson')
+pl.style.use('normal') # benson / normal / classic [normal is a custom one I made, classic is the builtin]
 
 def plot(*args,**kwargs):
     ret = mpl_plot(*args,**kwargs)
@@ -14,8 +14,8 @@ def scatter(*args,**kwargs):
     ret = mpl_scatter(*args,**kwargs)
     pretty()
     return ret
-pl.plot = plot
-pl.scatter = scatter
+#pl.plot = plot
+#pl.scatter = scatter
 
 def ticf(both=None, x=None, y=None, ax=None, fig=None):
     # show only every n ticks
@@ -46,7 +46,7 @@ def ticf(both=None, x=None, y=None, ax=None, fig=None):
 
     fig.canvas.draw()
 
-def pretty(fig=None, ax=None, tickin=True, lims=False, xlim=None, ylim=None):
+def pretty(fig=None, ax=None, tickout=True, tickin=False, lims=False, xlim=None, ylim=None):
     if ax is not None:
         axs = [ax]
         fig = ax.figure
@@ -62,7 +62,7 @@ def pretty(fig=None, ax=None, tickin=True, lims=False, xlim=None, ylim=None):
 
     
         # ticks
-        if not tickin:
+        if not tickin and not tickout:
             for tic in ax.xaxis.get_major_ticks():
                 tic.tick1On = tic.tick2On = False
             for tic in ax.yaxis.get_major_ticks():
@@ -71,6 +71,8 @@ def pretty(fig=None, ax=None, tickin=True, lims=False, xlim=None, ylim=None):
 
         elif tickin:
             ax.tick_params(axis='both', which='both', direction='in', bottom='on', top='off', left='on', right='off')
+        elif tickout:
+            ax.tick_params(axis='both', which='both', direction='out', bottom='on', top='off', left='on', right='off')
 
         # lims
         if lims or xlim or ylim:

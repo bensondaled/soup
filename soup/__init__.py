@@ -1,1 +1,1 @@
-from .mpl import pretty
+from .classic import *
