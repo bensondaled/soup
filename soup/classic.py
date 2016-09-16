@@ -8,6 +8,7 @@ from .funcs import x
 from .mpl import *
 from .images import *
 from .animation import Animation
+from .shapes import *
 
 warnings.filterwarnings('ignore', "tight_layout : falling back to Agg renderer")
 pd.options.mode.chained_assignment = None
