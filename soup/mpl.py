@@ -1,21 +1,9 @@
 from matplotlib import pyplot as pl
+from matplotlib.colors import LinearSegmentedColormap
 pl.interactive(True)
 import numpy as np
-mpl_plot = pl.plot
-mpl_scatter = pl.scatter
 
 pl.style.use('normal') # benson / normal / classic [normal is a custom one I made, classic is the builtin]
-
-def plot(*args,**kwargs):
-    ret = mpl_plot(*args,**kwargs)
-    pretty()
-    return ret
-def scatter(*args,**kwargs):
-    ret = mpl_scatter(*args,**kwargs)
-    pretty()
-    return ret
-#pl.plot = plot
-#pl.scatter = scatter
 
 def ticf(both=None, x=None, y=None, ax=None, fig=None):
     # show only every n ticks
@@ -46,6 +34,15 @@ def ticf(both=None, x=None, y=None, ax=None, fig=None):
 
     fig.canvas.draw()
 
+def despine(ax=None, which=['top','right']):
+    if ax is None:
+        ax = pl.gca()
+    # spines
+    if which == 'all':
+        which = ['top','right','bottom','left']
+    for w in which:
+        ax.spines[w].set_visible(False)
+
 def pretty(fig=None, ax=None, tickout=True, tickin=False, lims=False, xlim=None, ylim=None):
     if ax is not None:
         axs = [ax]
@@ -59,7 +56,6 @@ def pretty(fig=None, ax=None, tickout=True, tickin=False, lims=False, xlim=None,
         # spines
         ax.spines['top'].set_visible(False)
         ax.spines['right'].set_visible(False)
-
     
         # ticks
         if not tickin and not tickout:
