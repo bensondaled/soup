@@ -3,10 +3,10 @@ from subprocess import call
 import os
 
 class Animation():
-    def __init__(self, base, fig=None, interval=1.):
+    def __init__(self, base, fig=None, rate=1.):
         self.path = base
         self.fig = fig or pl.gcf()
-        self.interval = interval
+        self.rate = rate
 
         self._tmpname = self.path + '_tmp{:05d}.png'
         self._idx = 0
@@ -19,6 +19,6 @@ class Animation():
         self._idx += 1
 
     def end(self):
-        call(['ffmpeg', '-f', 'image2', '-r', '1/{}'.format(int(self.interval)), '-i', '{}_tmp%05d.png'.format(self.path), '-vcodec', 'mpeg4', '-y', self.path+'.mp4'])
+        call(['ffmpeg', '-f', 'image2', '-r', '{}'.format(int(self.rate)), '-i', '{}_tmp%05d.png'.format(self.path), '-vcodec', 'mpeg4', '-y', self.path+'.mp4'])
         for n in self._tmplist:
             os.remove(n)

@@ -1,10 +1,16 @@
+import matplotlib
+matplotlib.use('tkagg')
+
 import numpy as np
 import os, h5py
 import pandas as pd
 import warnings
 import pyfluo as pf
-import cv2
-cv2.ocl.setUseOpenCL(False)
+try:
+    import cv2
+    cv2.ocl.setUseOpenCL(False)
+except:
+    pass
 from skimage.io import imread,imsave
 from .funcs import x, savefig, loadfig, tic, toc, norm
 from .mpl import *
