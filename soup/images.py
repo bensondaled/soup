@@ -1,3 +1,3 @@
 
-def imnorm(im):
-    return (im-im.min())/(im.max()-im.min())
+def norm(im, **kw):
+    return (im-im.min(**kw))/(im.max(**kw)-im.min(**kw))

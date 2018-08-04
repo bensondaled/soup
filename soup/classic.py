@@ -1,11 +1,14 @@
 import matplotlib
-matplotlib.use('tkagg')
+#matplotlib.use('tkagg')
+matplotlib.use('qt5agg')
 from .mpl import *
 
 import numpy as np
 import os, h5py
 import pandas as pd
 import pyfluo as pf
+from skimage.io import imread,imsave
+from .images import *
 
 """
 import warnings
@@ -14,9 +17,7 @@ try:
     cv2.ocl.setUseOpenCL(False)
 except:
     pass
-from skimage.io import imread,imsave
 from .funcs import x, savefig, loadfig, tic, toc, norm
-from .images import *
 from .colormaps import *
 from .animation import Animation
 from .shapes import *
