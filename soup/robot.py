@@ -1,3 +1,7 @@
+'''
+Quartz module: pip install pyobjc-framework-Quartz
+'''
+
 from Quartz.CoreGraphics import CGEventCreateMouseEvent
 from Quartz.CoreGraphics import CGEventPost
 from Quartz.CoreGraphics import kCGEventMouseMoved
