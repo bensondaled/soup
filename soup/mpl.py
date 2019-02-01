@@ -1,13 +1,117 @@
+import matplotlib
+matplotlib.use('tkagg')
+#matplotlib.use('qt5agg')
+
 from matplotlib import pyplot as pl
-from matplotlib.pyplot import hist as hist_orig
-from matplotlib.colors import LinearSegmentedColormap
 pl.interactive(True)
+pl.style.use('normal') # benson / normal / classic [normal is a custom one I made, classic is the builtin]
 from matplotlib import colors as mcolors
 import numpy as np
-from matplotlib.ticker import NullFormatter
+
 from mpl_toolkits.mplot3d import Axes3D
 
-pl.style.use('normal') # benson / normal / classic [normal is a custom one I made, classic is the builtin]
+def nc():
+    # named colours
+    colors = dict(mcolors.BASE_COLORS, **mcolors.CSS4_COLORS)
+
+    # Sort by hue, saturation, value and name.
+    by_hsv = sorted((tuple(mcolors.rgb_to_hsv(mcolors.to_rgba(color)[:3])), name)
+                    for name, color in colors.items())
+
+    # Get the sorted color names.
+    sorted_names = [name for hsv, name in by_hsv]
+
+    n = len(sorted_names)
+    ncols = 4
+    nrows = int(np.ceil(1. * n / ncols))
+
+    fig, ax = pl.subplots(figsize=(8, 5))
+
+    X, Y = fig.get_dpi() * fig.get_size_inches()
+
+    # row height
+    h = Y / (nrows + 1)
+    # col width
+    w = X / ncols
+
+    for i, name in enumerate(sorted_names):
+        col = i % ncols
+        row = int(i / ncols)
+        y = Y - (row * h) - h
+
+        xi_line = w * (col + 0.05)
+        xf_line = w * (col + 0.25)
+        xi_text = w * (col + 0.3)
+
+        ax.text(xi_text, y, name, fontsize=(h * 0.8),
+                horizontalalignment='left',
+                verticalalignment='center')
+
+        ax.hlines(
+            y + h * 0.1, xi_line, xf_line, color=colors[name], linewidth=(h * 0.6))
+
+    ax.set_xlim(0, X)
+    ax.set_ylim(0, Y)
+    ax.set_axis_off()
+
+    fig.subplots_adjust(left=0, right=1,
+                        top=1, bottom=0,
+                        hspace=0, wspace=0)
+
+def cm():
+    cmaps = [('Perceptually Uniform Sequential', [
+                'viridis', 'plasma', 'inferno', 'magma']),
+             ('Sequential', [
+                'Greys', 'Purples', 'Blues', 'Greens', 'Oranges', 'Reds',
+                'YlOrBr', 'YlOrRd', 'OrRd', 'PuRd', 'RdPu', 'BuPu',
+                'GnBu', 'PuBu', 'YlGnBu', 'PuBuGn', 'BuGn', 'YlGn']),
+             ('Sequential (2)', [
+                'binary', 'gist_yarg', 'gist_gray', 'gray', 'bone', 'pink',
+                'spring', 'summer', 'autumn', 'winter', 'cool', 'Wistia',
+                'hot', 'afmhot', 'gist_heat', 'copper']),
+             ('Diverging', [
+                'PiYG', 'PRGn', 'BrBG', 'PuOr', 'RdGy', 'RdBu',
+                'RdYlBu', 'RdYlGn', 'Spectral', 'coolwarm', 'bwr', 'seismic']),
+             ('Qualitative', [
+                'Pastel1', 'Pastel2', 'Paired', 'Accent',
+                'Dark2', 'Set1', 'Set2', 'Set3',
+                'tab10', 'tab20', 'tab20b', 'tab20c']),
+             ('Miscellaneous', [
+                'flag', 'prism', 'ocean', 'gist_earth', 'terrain', 'gist_stern',
+                'gnuplot', 'gnuplot2', 'CMRmap', 'cubehelix', 'brg', 'hsv',
+                'gist_rainbow', 'rainbow', 'jet', 'nipy_spectral', 'gist_ncar'])]
+
+
+    nrows = max(len(cmap_list) for cmap_category, cmap_list in cmaps)
+    gradient = np.linspace(0, 1, 256)
+    gradient = np.vstack((gradient, gradient))
+
+
+    def plot_color_gradients(cmap_category, cmap_list, nrows):
+        fig, axes = pl.subplots(nrows=nrows)
+        fig.subplots_adjust(top=0.95, bottom=0.01, left=0.2, right=0.99)
+        axes[0].set_title(cmap_category + ' colormaps', fontsize=14)
+
+        for ax, name in zip(axes, cmap_list):
+            ax.imshow(gradient, aspect='auto', cmap=pl.get_cmap(name))
+            pos = list(ax.get_position().bounds)
+            x_text = pos[0] - 0.01
+            y_text = pos[1] + pos[3]/2.
+            fig.text(x_text, y_text, name, va='center', ha='right', fontsize=10)
+
+        # Turn off *all* ticks & spines, not just the ones with colormaps.
+        for ax in axes:
+            ax.set_axis_off()
+
+
+    for cmap_category, cmap_list in cmaps:
+        plot_color_gradients(cmap_category, cmap_list, nrows)
+
+    pl.show()
+
+""" Other options
+from matplotlib.ticker import NullFormatter
+from matplotlib.pyplot import hist as hist_orig
 
 def hist(*args,**kwargs):
     kwargs['histtype'] = kwargs.pop('histtype','step')
@@ -128,105 +232,6 @@ def pretty(fig=None, ax=None, tickout=True, tickin=False, lims=False, xlim=None,
     pl.margins(0.05)
     fig.canvas.draw()
 
-def nc():
-    # named colours
-    colors = dict(mcolors.BASE_COLORS, **mcolors.CSS4_COLORS)
-
-    # Sort by hue, saturation, value and name.
-    by_hsv = sorted((tuple(mcolors.rgb_to_hsv(mcolors.to_rgba(color)[:3])), name)
-                    for name, color in colors.items())
-
-    # Get the sorted color names.
-    sorted_names = [name for hsv, name in by_hsv]
-
-    n = len(sorted_names)
-    ncols = 4
-    nrows = int(np.ceil(1. * n / ncols))
-
-    fig, ax = pl.subplots(figsize=(8, 5))
-
-    X, Y = fig.get_dpi() * fig.get_size_inches()
-
-    # row height
-    h = Y / (nrows + 1)
-    # col width
-    w = X / ncols
-
-    for i, name in enumerate(sorted_names):
-        col = i % ncols
-        row = int(i / ncols)
-        y = Y - (row * h) - h
-
-        xi_line = w * (col + 0.05)
-        xf_line = w * (col + 0.25)
-        xi_text = w * (col + 0.3)
-
-        ax.text(xi_text, y, name, fontsize=(h * 0.8),
-                horizontalalignment='left',
-                verticalalignment='center')
-
-        ax.hlines(
-            y + h * 0.1, xi_line, xf_line, color=colors[name], linewidth=(h * 0.6))
-
-    ax.set_xlim(0, X)
-    ax.set_ylim(0, Y)
-    ax.set_axis_off()
-
-    fig.subplots_adjust(left=0, right=1,
-                        top=1, bottom=0,
-                        hspace=0, wspace=0)
-
-def cm():
-    cmaps = [('Perceptually Uniform Sequential', [
-                'viridis', 'plasma', 'inferno', 'magma']),
-             ('Sequential', [
-                'Greys', 'Purples', 'Blues', 'Greens', 'Oranges', 'Reds',
-                'YlOrBr', 'YlOrRd', 'OrRd', 'PuRd', 'RdPu', 'BuPu',
-                'GnBu', 'PuBu', 'YlGnBu', 'PuBuGn', 'BuGn', 'YlGn']),
-             ('Sequential (2)', [
-                'binary', 'gist_yarg', 'gist_gray', 'gray', 'bone', 'pink',
-                'spring', 'summer', 'autumn', 'winter', 'cool', 'Wistia',
-                'hot', 'afmhot', 'gist_heat', 'copper']),
-             ('Diverging', [
-                'PiYG', 'PRGn', 'BrBG', 'PuOr', 'RdGy', 'RdBu',
-                'RdYlBu', 'RdYlGn', 'Spectral', 'coolwarm', 'bwr', 'seismic']),
-             ('Qualitative', [
-                'Pastel1', 'Pastel2', 'Paired', 'Accent',
-                'Dark2', 'Set1', 'Set2', 'Set3',
-                'tab10', 'tab20', 'tab20b', 'tab20c']),
-             ('Miscellaneous', [
-                'flag', 'prism', 'ocean', 'gist_earth', 'terrain', 'gist_stern',
-                'gnuplot', 'gnuplot2', 'CMRmap', 'cubehelix', 'brg', 'hsv',
-                'gist_rainbow', 'rainbow', 'jet', 'nipy_spectral', 'gist_ncar'])]
-
-
-    nrows = max(len(cmap_list) for cmap_category, cmap_list in cmaps)
-    gradient = np.linspace(0, 1, 256)
-    gradient = np.vstack((gradient, gradient))
-
-
-    def plot_color_gradients(cmap_category, cmap_list, nrows):
-        fig, axes = pl.subplots(nrows=nrows)
-        fig.subplots_adjust(top=0.95, bottom=0.01, left=0.2, right=0.99)
-        axes[0].set_title(cmap_category + ' colormaps', fontsize=14)
-
-        for ax, name in zip(axes, cmap_list):
-            ax.imshow(gradient, aspect='auto', cmap=pl.get_cmap(name))
-            pos = list(ax.get_position().bounds)
-            x_text = pos[0] - 0.01
-            y_text = pos[1] + pos[3]/2.
-            fig.text(x_text, y_text, name, va='center', ha='right', fontsize=10)
-
-        # Turn off *all* ticks & spines, not just the ones with colormaps.
-        for ax in axes:
-            ax.set_axis_off()
-
-
-    for cmap_category, cmap_list in cmaps:
-        plot_color_gradients(cmap_category, cmap_list, nrows)
-
-    pl.show()
-
 def scatterhist(x, y, fig=None, bins=30, scatter_kw={}, hist_kw={}):
     if fig is None:
         fig = pl.figure()
@@ -285,4 +290,4 @@ def scatterhist(x, y, fig=None, bins=30, scatter_kw={}, hist_kw={}):
 
     return axScatter,axHistx,axHisty
 
-
+"""

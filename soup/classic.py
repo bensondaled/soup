@@ -1,6 +1,3 @@
-import matplotlib
-#matplotlib.use('tkagg')
-matplotlib.use('qt5agg')
 from .mpl import *
 
 import numpy as np
