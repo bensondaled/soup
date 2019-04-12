@@ -3,8 +3,8 @@ from .mpl import *
 import numpy as np
 import os, h5py
 import pandas as pd
-import pyfluo as pf
-from skimage.io import imread,imsave
+#import pyfluo as pf
+#from skimage.io import imread,imsave
 from .images import *
 
 """
